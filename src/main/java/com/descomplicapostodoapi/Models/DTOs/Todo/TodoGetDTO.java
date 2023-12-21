@@ -1,6 +1,6 @@
-package com.descomplicapostodoapi.Models.Entities;
+package com.descomplicapostodoapi.Models.DTOs.Todo;
 
-import jakarta.persistence.*;
+import com.descomplicapostodoapi.Models.DTOs.User.UserGetDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,41 +10,32 @@ import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "todos")
-public class Todo {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TodoGetDTO {
     @Getter
+    @Setter
     private long id;
 
-    @Column(nullable = false)
     @Getter
     @Setter
     private String title;
 
-    @Column(length = 5000)
     @Getter
     @Setter
     private String description;
 
-    @Column(name = "created_at")
     @Getter
     @Setter
     private Date createdAt;
 
-    @Column(name = "updated_at")
     @Getter
     @Setter
     private Date updatedAt;
 
-    @Column
     @Getter
     @Setter
     private boolean finished;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
     @Getter
     @Setter
-    private User user;
+    private UserGetDTO user;
 }

@@ -12,6 +12,7 @@ import java.util.List;
 @Service
 public class UsersService {
     private final UsersRepository usersRepository;
+    private final UserAdapter userAdapter = new UserAdapter();
 
     @Autowired
     public UsersService(UsersRepository usersRepository) {
@@ -19,22 +20,22 @@ public class UsersService {
     }
 
     public List<UserGetDTO> getAll() {
-        return new UserAdapter().parse(usersRepository.findAll());
+        return userAdapter.parse(usersRepository.findAll());
     }
 
     public UserGetDTO getById(long id) {
         return usersRepository.findById(id)
-                .map(user -> new UserAdapter().parse(user))
+                .map(userAdapter::parse)
                 .orElse(null);
     }
 
     public void post(UserPostPutDTO userPostPutDTO) {
-        usersRepository.save(new UserAdapter().parse(userPostPutDTO));
+        usersRepository.save(userAdapter.parse(userPostPutDTO));
     }
 
     public void put(UserPostPutDTO userPostPutDTO) {
         usersRepository.findById(userPostPutDTO.getId())
-                .ifPresent(user -> usersRepository.save(new UserAdapter().parse(userPostPutDTO, user)));
+                .ifPresent(user -> usersRepository.save(userAdapter.parse(userPostPutDTO, user)));
     }
 
     public void delete(long id) {

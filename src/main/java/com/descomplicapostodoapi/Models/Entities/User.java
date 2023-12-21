@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "users")
@@ -15,7 +18,7 @@ public class User {
     @Getter
     private long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @Getter
     @Setter
     private String email;
@@ -29,4 +32,9 @@ public class User {
     @Getter
     @Setter
     private String name;
+
+    @OneToMany(mappedBy = "user")
+    @Getter
+    @Setter
+    private List<Todo> todos = new ArrayList<>();
 }

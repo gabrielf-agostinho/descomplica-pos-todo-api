@@ -45,7 +45,7 @@ public class UsersController {
     public ResponseEntity<?> post(@RequestBody UserPostPutDTO userPostPutDTO) {
         try {
             usersService.post(userPostPutDTO);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
