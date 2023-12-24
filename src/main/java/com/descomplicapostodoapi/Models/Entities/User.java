@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -32,6 +33,16 @@ public class User {
     @Getter
     @Setter
     private String name;
+
+    @Column
+    @Getter
+    @Setter
+    private String refresh;
+
+    @Column(name = "expires_at")
+    @Getter
+    @Setter
+    private Date expiresAt;
 
     @OneToMany(mappedBy = "user")
     @Getter
