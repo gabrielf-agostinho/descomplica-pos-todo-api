@@ -2,11 +2,13 @@ package com.descomplicapostodoapi.Services;
 
 import com.descomplicapostodoapi.Adapters.UserAdapter;
 import com.descomplicapostodoapi.Models.DTOs.Auth.AuthDTO;
+import com.descomplicapostodoapi.Models.DTOs.Auth.RefreshTokenDTO;
 import com.descomplicapostodoapi.Models.DTOs.Auth.TokenDTO;
 import com.descomplicapostodoapi.Models.DTOs.User.UserGetDTO;
 import com.descomplicapostodoapi.Models.Entities.User;
 import com.descomplicapostodoapi.Repositories.UsersRepository;
-import com.descomplicapostodoapi.Utils.BCrypt;
+import com.descomplicapostodoapi.Utils.Crypto;
+import com.descomplicapostodoapi.Utils.Exceptions.UnauthorizedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,7 +28,6 @@ import java.util.function.Function;
 @Service
 public class AuthService {
     private static final String SECRET = "dacec6385caa376732b6e547eb7445ae";
-    private final BCrypt bCrypt = new BCrypt();
     private final UserAdapter userAdapter = new UserAdapter();
     private final UsersRepository usersRepository;
 
@@ -36,27 +37,32 @@ public class AuthService {
     }
 
     public User findByEmailAndPassword(AuthDTO authDTO) {
-        User user = usersRepository.findUserByEmail(authDTO.getEmail());
-
-        if (user != null && isPasswordMatching(authDTO.getPassword(), user.getPassword()))
-            return user;
-        else
-            return null;
+        return usersRepository.findUserByEmailAndPassword(authDTO.getEmail(), Crypto.MD5(authDTO.getPassword()));
     }
 
     public User findByEmail(String email) {
         return usersRepository.findUserByEmail(email);
     }
 
-    private boolean isPasswordMatching(String rawPassword, String hashedPassword) {
-        return bCrypt.bCryptPasswordEncoder().matches(rawPassword, hashedPassword);
-    }
-
     public String extractEmail(String token) {
+        token = normalizeToken(token);
+
         return extractClaim(token, Claims::getSubject);
     }
 
+    public Date extractExpiration(String token) {
+        token = normalizeToken(token);
+
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    private Boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        token = normalizeToken(token);
+
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -93,7 +99,7 @@ public class AuthService {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
-                .isSigned(token);
+                .isSigned(token) && !isTokenExpired(token);
     }
 
     private String createToken(Map<String, Object> claims, String username, Date issuedAt, Date expiration) {
@@ -122,5 +128,9 @@ public class AuthService {
         System.arraycopy(stringBytes, 0, fixedSizeBytes, 0, Math.min(stringBytes.length, fixedSizeBytes.length));
 
         return Keys.hmacShaKeyFor(stringBytes);
+    }
+
+    private String normalizeToken(String token) {
+        return token.replaceFirst("Bearer ", "");
     }
 }

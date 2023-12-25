@@ -3,6 +3,7 @@ package com.descomplicapostodoapi.Controllers;
 import com.descomplicapostodoapi.Models.DTOs.Todo.TodoGetDTO;
 import com.descomplicapostodoapi.Models.DTOs.Todo.TodoPostPutDTO;
 import com.descomplicapostodoapi.Services.TodosService;
+import com.descomplicapostodoapi.Utils.Annotations.Authentication.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class TodosController {
     }
 
     @GetMapping("")
+    @Authentication
     public ResponseEntity<?> getAll() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(todosService.getAll());
@@ -28,6 +30,7 @@ public class TodosController {
     }
 
     @GetMapping("/user/{userId}")
+    @Authentication
     public ResponseEntity<?> getAllByUser(@PathVariable long userId) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(todosService.getAllByUser(userId));
@@ -37,6 +40,7 @@ public class TodosController {
     }
 
     @GetMapping("/{id}")
+    @Authentication
     public ResponseEntity<?> getById(@PathVariable long id) {
         try {
             TodoGetDTO todoGetDTO = todosService.getById(id);
@@ -51,6 +55,7 @@ public class TodosController {
     }
 
     @PostMapping("")
+    @Authentication
     public ResponseEntity<?> post(@RequestBody TodoPostPutDTO todoPostPutDTO) {
         try {
             todosService.post(todoPostPutDTO);
@@ -61,6 +66,7 @@ public class TodosController {
     }
 
     @PutMapping("")
+    @Authentication
     public ResponseEntity<?> put(@RequestBody TodoPostPutDTO todoPostPutDTO) {
         try {
             todosService.put(todoPostPutDTO);
@@ -71,6 +77,7 @@ public class TodosController {
     }
 
     @DeleteMapping("/{id}")
+    @Authentication
     public ResponseEntity<?> delete(@PathVariable long id) {
         try {
             todosService.delete(id);

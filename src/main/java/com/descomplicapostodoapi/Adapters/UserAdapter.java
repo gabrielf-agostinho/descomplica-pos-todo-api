@@ -3,13 +3,12 @@ package com.descomplicapostodoapi.Adapters;
 import com.descomplicapostodoapi.Models.DTOs.User.UserGetDTO;
 import com.descomplicapostodoapi.Models.DTOs.User.UserPostPutDTO;
 import com.descomplicapostodoapi.Models.Entities.User;
-import com.descomplicapostodoapi.Utils.BCrypt;
+import com.descomplicapostodoapi.Utils.Crypto;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserAdapter {
-    private final BCrypt bCrypt = new BCrypt();
 
     public UserGetDTO parse(User user) {
         UserGetDTO userGetDTO = new UserGetDTO();
@@ -32,7 +31,7 @@ public class UserAdapter {
 
         user.setEmail(userPostPutDTO.getEmail());
         user.setName(userPostPutDTO.getName());
-        user.setPassword(bCrypt.bCryptPasswordEncoder().encode(userPostPutDTO.getPassword()));
+        user.setPassword(Crypto.MD5(userPostPutDTO.getPassword()));
 
         return user;
     }
@@ -40,7 +39,7 @@ public class UserAdapter {
     public User parse(UserPostPutDTO userPostPutDTO, User user) {
         user.setEmail(userPostPutDTO.getEmail());
         user.setName(userPostPutDTO.getName());
-        user.setPassword(bCrypt.bCryptPasswordEncoder().encode(userPostPutDTO.getPassword()));
+        user.setPassword(Crypto.MD5(userPostPutDTO.getPassword()));
 
         return user;
     }

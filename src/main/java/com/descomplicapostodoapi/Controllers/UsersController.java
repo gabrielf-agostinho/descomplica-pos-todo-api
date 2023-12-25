@@ -3,6 +3,7 @@ package com.descomplicapostodoapi.Controllers;
 import com.descomplicapostodoapi.Models.DTOs.User.UserGetDTO;
 import com.descomplicapostodoapi.Models.DTOs.User.UserPostPutDTO;
 import com.descomplicapostodoapi.Services.UsersService;
+import com.descomplicapostodoapi.Utils.Annotations.Authentication.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class UsersController {
     }
 
     @GetMapping("")
+    @Authentication
     public ResponseEntity<?> getAll() {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(usersService.getAll());
@@ -28,6 +30,7 @@ public class UsersController {
     }
 
     @GetMapping("/{id}")
+    @Authentication
     public ResponseEntity<?> getById(@PathVariable long id) {
         try {
             UserGetDTO user =  usersService.getById(id);
@@ -52,6 +55,7 @@ public class UsersController {
     }
 
     @PutMapping("")
+    @Authentication
     public ResponseEntity<?> put(@RequestBody UserPostPutDTO userPostPutDTO) {
         try {
             usersService.put(userPostPutDTO);
@@ -62,6 +66,7 @@ public class UsersController {
     }
 
     @DeleteMapping("/{id}")
+    @Authentication
     public ResponseEntity<?> delete(@PathVariable long id) {
         try {
             usersService.delete(id);
