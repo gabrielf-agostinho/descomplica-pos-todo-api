@@ -32,7 +32,7 @@ public class TodosService {
 
     public List<TodoGetDTO> getAllByUser(long userId) {
         return usersRepository.findById(userId)
-                .map(user -> todoAdapter.parse(todosRepository.findAllByUser(user)))
+                .map(user -> todoAdapter.parse(todosRepository.findAllByUserOrderByCreatedAtDesc(user)))
                 .orElse(Collections.emptyList());
 
     }

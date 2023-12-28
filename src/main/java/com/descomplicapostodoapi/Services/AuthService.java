@@ -57,7 +57,12 @@ public class AuthService {
     }
 
     private Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        try {
+            return extractExpiration(token).before(new Date());
+        }
+        catch (Exception e) {
+            return true;
+        }
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -96,10 +101,13 @@ public class AuthService {
     }
 
     public boolean validateToken(String token) {
+        if (isTokenExpired(token))
+            return false;
+
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
-                .isSigned(token) && !isTokenExpired(token);
+                .isSigned(token);
     }
 
     private String createToken(Map<String, Object> claims, String username, Date issuedAt, Date expiration) {

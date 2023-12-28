@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface TodosRepository extends JpaRepository<Todo, Long> {
-    public List<Todo> findAllByUser(User user);
+    public List<Todo> findAllByUserOrderByCreatedAtDesc(User user);
 }
